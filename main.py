@@ -4,11 +4,14 @@ import qtmodern.styles
 import qtmodern.windows
 from PyQt5.QtWidgets import QApplication
 
-from ui.LoginWindow import LoginWindow
+from db.Database import conn
+from ui.MainWindow import MainWindow
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     qtmodern.styles.dark(app)
-    mw = qtmodern.windows.ModernWindow(LoginWindow())
+    mw = qtmodern.windows.ModernWindow(MainWindow())
     mw.show()
-    sys.exit(app.exec_())
+    ret = app.exec_()
+    conn.close()
+    sys.exit(ret)

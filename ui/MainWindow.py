@@ -1,32 +1,17 @@
-from PyQt5.QtWidgets import QPushButton, QHBoxLayout, QVBoxLayout, QWidget
-from qtmodern.windows import ModernWindow
+from PyQt5.QtWidgets import QWidget, QMainWindow
 
+from ui.CenterWidget import CenterWidget
 from ui.LoginWindow import LoginWindow
 
 
-class MainWindow(ModernWindow):
+class MainWindow(QMainWindow, CenterWidget):
 
     def __init__(self, parent=None):
-        super().__init__(parent)
+        super().__init__()
+        self.setWindowTitle("Window22222")
+
         self.login_window = LoginWindow()
-        self.init_ui()
+        self.check_login()
 
-    def init_ui(self):
-        okButton = QPushButton("OK")
-        cancelButton = QPushButton("Cancel")
-
-        hbox = QHBoxLayout()
-        hbox.addStretch(1)
-        hbox.addWidget(okButton)
-        hbox.addWidget(cancelButton)
-
-        vbox = QVBoxLayout()
-        vbox.addStretch(1)
-        vbox.addLayout(hbox)
-
-        central_widget = QWidget()
-        central_widget.setLayout(vbox)
-        self.setCentralWidget(central_widget)
-
-        self.setGeometry(300, 300, 300, 150)
-        self.setWindowTitle('Buttons')
+    def check_login(self):
+        self.login_window.show()

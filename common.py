@@ -1,4 +1,3 @@
-import os
 import pathlib
 
 db_path = pathlib.Path(__file__).parent.joinpath('pm.db').absolute()
