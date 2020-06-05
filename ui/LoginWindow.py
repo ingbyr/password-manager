@@ -1,14 +1,15 @@
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, \
-    QLineEdit, QMessageBox, QMainWindow
+    QLineEdit, QMessageBox
 
 from db.Database import create_app_account, login
 from ui.CenterWidget import CenterWidget
 
 
 class LoginWindow(QWidget, CenterWidget):
-    def __init__(self):
+    def __init__(self, mv):
         super().__init__()
+        self.mv = mv
         self.setWindowTitle('登陆')
         self.input_account = QLineEdit()
         self.input_password = QLineEdit()
@@ -54,7 +55,7 @@ class LoginWindow(QWidget, CenterWidget):
         account = self.input_account.text()
         password = self.input_password.text()
         if login(account, password):
-            self.close()
+            self.open_main_window()
         else:
             QMessageBox.warning(self, '账户名或密码错误', '账户名或密码错误', QMessageBox.Yes)
 
@@ -64,11 +65,10 @@ class LoginWindow(QWidget, CenterWidget):
         # TODO 检查用户名和密码合法性，并对密码加密
         if create_app_account(account, password):
             QMessageBox.information(self, '注册成功', '注册成功，欢迎用户 ' + account, QMessageBox.Yes)
-            self.close()
+            self.open_main_window()
         else:
             QMessageBox.warning(self, '注册失败', '用户名已被占用', QMessageBox.Close)
 
-
-
-
-
+    def open_main_window(self):
+        self.close()
+        self.mv.load_data_signal.emit()

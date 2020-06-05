@@ -1,6 +1,7 @@
+import datetime
 import sqlite3
 
-from common import db_path
+from Common import db_path
 
 conn = sqlite3.connect(db_path)
 cur = conn.cursor()
@@ -9,19 +10,21 @@ cur = conn.cursor()
 cur.execute('''
     CREATE TABLE IF NOT EXISTS account
     (
-        id INT PRIMARY KEY,
-        username TEXT NOT NULL,
-        password TEXT NOT NULL,
-        comment TEXT
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        accountname TEXT NOT NULL ,
+        username TEXT NOT NULL ,
+        password TEXT NOT NULL ,
+        usedby TEXT DEFAULT '' ,
+        datetime TEXT NOT NULL 
     )''')
 
 # 应用设置
 cur.execute('''
     CREATE TABLE IF NOT EXISTS app_config
     (
-        id INT PRIMARY KEY,
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
         username TEXT NOT NULL ,
-        password TEXT NOT NULL,
+        password TEXT NOT NULL ,
         theme TEXT default 'light'
     )''')
 
@@ -44,3 +47,16 @@ def login(username, password):
     c = conn.cursor()
     u, p = c.execute('SELECT username, password FROM app_config').fetchone()
     return u == username and p == password
+
+
+def insert_account(accountname, username, password, usedby, datetime):
+    c = conn.cursor()
+    res = c.execute('SELECT accountname FROM account WHERE accountname=? and username=? and usedby=?',
+                    (accountname, username, usedby)).fetchone()
+    if not res:
+        c.execute('INSERT INTO account (accountname, username, password, usedby, datetime) VALUES (?, ?, ?, ?, ?)',
+                  (accountname, username, password, usedby, datetime))
+        conn.commit()
+        return True
+    else:
+        return False
