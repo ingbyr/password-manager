@@ -18,7 +18,7 @@ class AccountWidget(QWidget):
         hbox_btn = QHBoxLayout()
         hbox_btn.setSpacing(5)
         self.confirm_btn = QPushButton('确认')
-        self.cancel_btn = QPushButton('取消')
+        self.cancel_btn = QPushButton('关闭')
         self.msg = QLabel()
         hbox_btn.addWidget(self.msg)
         hbox_btn.addStretch(1)

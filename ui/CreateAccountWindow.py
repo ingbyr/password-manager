@@ -20,7 +20,7 @@ class CreateAccountWindow(QWidget):
         accoutname, username, password, usedb = self.account_widget.get_account_info()
         if Database.insert_account(accoutname, username,
                                    password, usedb,
-                                   datetime.now()):
+                                   datetime.now().date()):
             self.account_widget.msg.setText('添加成功')
         else:
             self.account_widget.msg.setText('存在相同数据')

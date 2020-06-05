@@ -1,4 +1,3 @@
-import datetime
 import sqlite3
 
 from Common import db_path
@@ -60,3 +59,8 @@ def insert_account(accountname, username, password, usedby, datetime):
         return True
     else:
         return False
+
+
+def select_all_account():
+    c = conn.cursor()
+    return c.execute('SELECT * FROM account').fetchall()
