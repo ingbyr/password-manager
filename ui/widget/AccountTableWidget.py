@@ -5,6 +5,7 @@ from PyQt5.QtWidgets import QTableWidget, QHeaderView, QTableWidgetItem
 class AccountTableWidget(QTableWidget):
     def __init__(self):
         super().__init__()
+        self.mask_password = True
         # 账户展示
         self.setColumnCount(6)
         header_labels = ['id', '账户名', '用户名', '密码', '使用者', '创建时间']
@@ -26,4 +27,8 @@ class AccountTableWidget(QTableWidget):
             row = self.rowCount()
             self.setRowCount(row + 1)
             for i, d in enumerate(account):
-                self.setItem(row, i, QTableWidgetItem(str(d)))
+                if i == 3 and self.mask_password:
+                    self.setItem(row, i, QTableWidgetItem('******'))
+                else:
+                    # TODO 解密密码
+                    self.setItem(row, i, QTableWidgetItem(str(d)))

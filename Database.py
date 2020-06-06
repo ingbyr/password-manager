@@ -1,6 +1,8 @@
+import os
 import sqlite3
+from datetime import datetime
 
-from Common import db_path
+from Common import db_path, db_backup_dir
 
 conn = sqlite3.connect(db_path)
 cur = conn.cursor()
@@ -89,3 +91,17 @@ def delete_account_by_id(account_id):
     c = conn.cursor()
     c.execute('DELETE FROM account WHERE id = ?', (account_id,))
     conn.commit()
+
+
+def backup():
+    file = db_backup_dir.joinpath(datetime.now().strftime('%Y%m%d%H%M%S') + '.bin')
+    with open(file, 'wb') as f:
+        for line in conn.iterdump():
+            data = line + '\n'
+            f.write(str.encode(data, 'utf-8'))
+    return file
+
+
+def list_backups():
+    return os.listdir(db_backup_dir)
+
