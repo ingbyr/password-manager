@@ -66,11 +66,26 @@ def select_all_account():
     return c.execute('SELECT * FROM account').fetchall()
 
 
-def select_account_by_accountname(accountname):
+def select_account_by_account_name(account_name):
     c = conn.cursor()
-    return c.execute('SELECT * FROM account WHERE accountname=?', (accountname,)).fetchall()
+    return c.execute('SELECT * FROM account WHERE accountname=?', (account_name,)).fetchall()
 
 
 def select_account_by_id(data_id):
     c = conn.cursor()
     return c.execute('SELECT accountname, username, password, usedby FROM account WHERE id=?', (data_id,)).fetchone()
+
+
+def update_account(data_id, an, un, pw, ub, date):
+    c = conn.cursor()
+    c.execute('UPDATE account '
+              'SET accountname = ?, username = ?, password = ?, usedby=?, datetime=? '
+              'WHERE id = ?',
+              (an, un, pw, ub, date, data_id))
+    conn.commit()
+
+
+def delete_account_by_id(account_id):
+    c = conn.cursor()
+    c.execute('DELETE FROM account WHERE id = ?', (account_id,))
+    conn.commit()

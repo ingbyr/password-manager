@@ -1,8 +1,9 @@
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QMainWindow, QGridLayout, QPushButton, QWidget, QMenu
 
+import Database
 from Database import select_all_account
-from ui.AccountWindow import AccountWindow
+from ui.FilterAccountWindow import FilterAccountWindow
 from ui.EditAccountWindow import EditAccountWindow
 from ui.widget.AccountTableWidget import AccountTableWidget
 from ui.widget.CenterWidget import CenterWidget
@@ -31,13 +32,13 @@ class MainWindow(QMainWindow, CenterWidget):
 
         # 创建账户
         self.create_account_window = CreateAccountWindow(self)
-        self.edite_account_window = EditAccountWindow(self)
+        self.edit_account_window = EditAccountWindow(self.refresh_data_signal)
 
         # 账户数据
         self.data_table = AccountTableWidget()
 
         # 单个账户数据
-        self.account_window = AccountWindow()
+        self.account_window = FilterAccountWindow(self.refresh_data_signal)
 
         self.init_ui()
 
@@ -57,7 +58,7 @@ class MainWindow(QMainWindow, CenterWidget):
         local_backup_btn.clicked.connect(self.local_backup_data)
         grid.addWidget(local_backup_btn, 1, 1)
 
-        cloud_backup_btn = QPushButton('云端备份')
+        cloud_backup_btn = QPushButton('显示明文')
         cloud_backup_btn.clicked.connect(self.cloud_backup_data)
         grid.addWidget(cloud_backup_btn, 1, 2)
 
@@ -97,14 +98,16 @@ class MainWindow(QMainWindow, CenterWidget):
         action = menu.exec_(self.data_table.mapToGlobal(pos))
 
         if action == find_action:
-            accountname = self.data_table.item(row_num, 1).text()
-            self.account_window.load_data(accountname)
+            an = self.data_table.item(row_num, 1).text()
+            self.account_window.load_data(an)
             self.account_window.show()
         elif action == edit_action:
-            data_id = self.data_table.item(row_num, 0).text()
-            self.edite_account_window.data_id_signal.emit(int(data_id))
-            self.edite_account_window.show()
+            account_id = self.data_table.item(row_num, 0).text()
+            self.edit_account_window.data_id_signal.emit(int(account_id))
+            self.edit_account_window.show()
         elif action == delete_action:
-            pass
+            account_id = self.data_table.item(row_num, 0).text()
+            Database.delete_account_by_id(account_id)
+            self.refresh_data_signal.emit()
         else:
             return
