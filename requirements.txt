@@ -1,4 +1,4 @@
-pyqt5
-wheel
-pycryptodome
-qtmodern
+pyqt5==5.14.2
+wheel==0.34.2
+pycryptodome==3.9.7
+qtmodern==0.2.0

@@ -2,14 +2,15 @@ from datetime import datetime
 
 from PyQt5.QtWidgets import QWidget
 
-from db import Database
-from ui.AccountWidget import AccountWidget
+import Database
+from ui.widget.AccountWidget import AccountWidget
 
 
 class CreateAccountWindow(QWidget):
-    def __init__(self):
+    def __init__(self, mv):
         super().__init__()
-        self.setWindowTitle('添加用户')
+        self.mv = mv
+        self.setWindowTitle('添加')
         self.account_widget = AccountWidget()
         self.account_widget.confirm_btn.clicked.connect(self.create_account)
         self.account_widget.cancel_btn.clicked.connect(self.close)
@@ -22,5 +23,6 @@ class CreateAccountWindow(QWidget):
                                    password, usedb,
                                    datetime.now().date()):
             self.account_widget.msg.setText('添加成功')
+            self.mv.refresh_data_signal.emit()
         else:
             self.account_widget.msg.setText('存在相同数据')

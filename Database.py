@@ -64,3 +64,13 @@ def insert_account(accountname, username, password, usedby, datetime):
 def select_all_account():
     c = conn.cursor()
     return c.execute('SELECT * FROM account').fetchall()
+
+
+def select_account_by_accountname(accountname):
+    c = conn.cursor()
+    return c.execute('SELECT * FROM account WHERE accountname=?', (accountname,)).fetchall()
+
+
+def select_account_by_id(data_id):
+    c = conn.cursor()
+    return c.execute('SELECT accountname, username, password, usedby FROM account WHERE id=?', (data_id,)).fetchone()

@@ -2,8 +2,8 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QWidget, QHBoxLayout, QPushButton, QLabel, \
     QLineEdit, QMessageBox, QGridLayout
 
-from db.Database import create_app_account, login
-from ui.CenterWidget import CenterWidget
+from Database import create_app_account, login
+from ui.widget.CenterWidget import CenterWidget
 
 
 class LoginWindow(QWidget, CenterWidget):

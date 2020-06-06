@@ -1,8 +1,11 @@
 from PyQt5.QtCore import pyqtSignal
-from PyQt5.QtWidgets import QMainWindow, QGridLayout, QPushButton, QWidget, QTableWidget, QHeaderView, QTableWidgetItem
+from PyQt5.QtWidgets import QMainWindow, QGridLayout, QPushButton, QWidget, QMenu
 
-from db.Database import select_all_account
-from ui.CenterWidget import CenterWidget
+from Database import select_all_account
+from ui.AccountWindow import AccountWindow
+from ui.EditAccountWindow import EditAccountWindow
+from ui.widget.AccountTableWidget import AccountTableWidget
+from ui.widget.CenterWidget import CenterWidget
 from ui.CreateAccountWindow import CreateAccountWindow
 from ui.LoginWindow import LoginWindow
 
@@ -10,26 +13,35 @@ from ui.LoginWindow import LoginWindow
 class MainWindow(QMainWindow, CenterWidget):
     quit_signal = pyqtSignal()
     init_signal = pyqtSignal()
+    refresh_data_signal = pyqtSignal()
 
     def __init__(self, parent=None):
         super().__init__()
-        self.table = QTableWidget()
         self.setWindowTitle('密码管理器')
 
         # 订阅信号
         self.quit_signal.connect(self.close)
         self.init_signal.connect(self.init_ui)
+        self.refresh_data_signal.connect(self.load_data)
 
         # 登陆
         self.login_window = LoginWindow(self)
         # TODO uncomment below
         # self.open_login_window()
-        self.init_ui()
 
         # 创建账户
-        self.account_window = CreateAccountWindow()
+        self.create_account_window = CreateAccountWindow(self)
+        self.edite_account_window = EditAccountWindow(self)
 
-    # 加载主窗口UI和数据
+        # 账户数据
+        self.data_table = AccountTableWidget()
+
+        # 单个账户数据
+        self.account_window = AccountWindow()
+
+        self.init_ui()
+
+    # 加载主窗口
     def init_ui(self):
         grid = QGridLayout()
         grid.setSpacing(20)
@@ -50,16 +62,9 @@ class MainWindow(QMainWindow, CenterWidget):
         grid.addWidget(cloud_backup_btn, 1, 2)
 
         # 账户展示
-        self.table.setColumnCount(6)
-        header_labels = ['id', '账户名', '用户名', '密码', '使用者', '创建时间']
-        self.table.setHorizontalHeaderLabels(header_labels)
-        self.table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
-        for idx, header in enumerate(header_labels):
-            if idx == 0 or idx == len(header_labels):
-                self.table.horizontalHeader().setSectionResizeMode(idx, QHeaderView.ResizeToContents)
-        grid.addWidget(self.table, 2, 0, 4, 3)
-        # 从数据库加载
+        self.data_table.set_item_menu(self.display_menu)
         self.load_data()
+        grid.addWidget(self.data_table, 2, 0, 4, 3)
 
     # 登陆窗口
     def open_login_window(self):
@@ -67,7 +72,7 @@ class MainWindow(QMainWindow, CenterWidget):
 
     # 添加账户数据
     def open_account_window(self):
-        self.account_window.show()
+        self.create_account_window.show()
 
     def local_backup_data(self):
         pass
@@ -75,11 +80,31 @@ class MainWindow(QMainWindow, CenterWidget):
     def cloud_backup_data(self):
         pass
 
+    # 加载数据到 table view
     def load_data(self):
         accounts = select_all_account()
-        print(accounts)
-        for account in accounts:
-            row = self.table.rowCount()
-            self.table.setRowCount(row + 1)
-            for i, d in enumerate(account):
-                self.table.setItem(row, i, QTableWidgetItem(d))
+        self.data_table.set_data(accounts)
+
+    def display_menu(self, pos):
+        row_num = -1
+        for i in self.data_table.selectionModel().selection().indexes():
+            row_num = i.row()
+
+        menu = QMenu()
+        find_action = menu.addAction('显示该账户所有数据')
+        edit_action = menu.addAction('修改')
+        delete_action = menu.addAction('删除')
+        action = menu.exec_(self.data_table.mapToGlobal(pos))
+
+        if action == find_action:
+            accountname = self.data_table.item(row_num, 1).text()
+            self.account_window.load_data(accountname)
+            self.account_window.show()
+        elif action == edit_action:
+            data_id = self.data_table.item(row_num, 0).text()
+            self.edite_account_window.data_id_signal.emit(int(data_id))
+            self.edite_account_window.show()
+        elif action == delete_action:
+            pass
+        else:
+            return
