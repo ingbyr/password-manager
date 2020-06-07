@@ -1,11 +1,13 @@
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QMainWindow, QGridLayout, QPushButton, QWidget, QMenu, QMessageBox
 
+import Backup
 import Database
 from Database import select_all_account
 from ui.CreateAccountWindow import CreateAccountWindow
 from ui.EditAccountWindow import EditAccountWindow
 from ui.FilterAccountWindow import FilterAccountWindow
+from ui.BackupWindow import LoadBackupWindow
 from ui.LoginWindow import LoginWindow
 from ui.widget.AccountTableWidget import AccountTableWidget
 from ui.widget.CenterWidget import CenterWidget
@@ -40,6 +42,8 @@ class MainWindow(QMainWindow, CenterWidget):
         # 单个账户数据
         self.account_window = FilterAccountWindow(self.refresh_data_signal)
 
+        self.load_backup_window = LoadBackupWindow(self.refresh_data_signal)
+
         # TODO delete this
         self.init_ui()
 
@@ -55,22 +59,26 @@ class MainWindow(QMainWindow, CenterWidget):
         create_account_btn.clicked.connect(self.open_account_window)
         grid.addWidget(create_account_btn, 1, 0)
 
-        local_backup_btn = QPushButton('本地备份')
-        local_backup_btn.clicked.connect(self.local_backup_data)
-        grid.addWidget(local_backup_btn, 1, 1)
-
         self.change_pw_way_text = {
             False: '不显示明文',
             True: '显示明文'
         }
         self.change_pw_way_btn = QPushButton(self.change_pw_way_text[self.account_table.mask_password])
         self.change_pw_way_btn.clicked.connect(self.change_pw_way)
-        grid.addWidget(self.change_pw_way_btn, 1, 2)
+        grid.addWidget(self.change_pw_way_btn, 1, 1)
+
+        local_backup_btn = QPushButton('备份数据')
+        local_backup_btn.clicked.connect(self.local_backup_data)
+        grid.addWidget(local_backup_btn, 1, 2)
+
+        local_backup_btn = QPushButton('加载备份')
+        local_backup_btn.clicked.connect(self.load_backup_data)
+        grid.addWidget(local_backup_btn, 1, 3)
 
         # 账户展示
         self.account_table.set_item_menu(self.display_menu)
         self.load_data()
-        grid.addWidget(self.account_table, 2, 0, 4, 3)
+        grid.addWidget(self.account_table, 2, 0, 4, 4)
 
     # 登陆窗口
     def open_login_window(self):
@@ -80,9 +88,15 @@ class MainWindow(QMainWindow, CenterWidget):
     def open_account_window(self):
         self.create_account_window.show()
 
+    # 备份本地数据库
     def local_backup_data(self):
-        file = Database.backup()
+        file = Backup.backup(Database.select_all_account())
         QMessageBox.information(self, '备份成功', '备份文件： ' + str(file))
+
+    # 加载备份
+    def load_backup_data(self):
+        self.load_backup_window.load_backups()
+        self.load_backup_window.show()
 
     def change_pw_way(self):
         self.account_table.mask_password = not self.account_table.mask_password
