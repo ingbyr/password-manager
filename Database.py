@@ -1,7 +1,8 @@
-import os
 import sqlite3
-from datetime import datetime
 
+from Crypto.Random import get_random_bytes
+
+import Encrypt
 from Common import db_path
 
 conn = sqlite3.connect(db_path)
@@ -14,7 +15,7 @@ cur.execute('''
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         accountname TEXT NOT NULL ,
         username TEXT NOT NULL ,
-        password TEXT NOT NULL ,
+        password BLOB NOT NULL ,
         usedby TEXT DEFAULT '' ,
         datetime TEXT NOT NULL 
     )''')
@@ -25,8 +26,9 @@ cur.execute('''
     (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         username TEXT NOT NULL ,
-        password TEXT NOT NULL ,
-        theme TEXT default 'light'
+        password BLOB NOT NULL ,
+        pkey BLOB NOT NULL,
+        nonce BLOB NOT NULL
     )''')
 
 conn.commit()
@@ -38,16 +40,28 @@ def create_app_account(username, password):
     if used_username:
         return False
     else:
+        # 随机生成128位密钥，用于密码加密和解密，与账户绑定
+        pk = get_random_bytes(16)
+        nonce = Encrypt.init(pk)
+        epw = Encrypt.instance.encode(password)
         c.execute(
-            'INSERT INTO app_config (username, password) VALUES (?, ?)', (username, password))
+            'INSERT INTO app_config (username, password, pkey, nonce) VALUES (?, ?, ?, ?)',
+            (username, epw, pk, nonce))
         conn.commit()
+        login(username, password)
         return True
 
 
 def login(username, password):
     c = conn.cursor()
-    u, p = c.execute('SELECT username, password FROM app_config').fetchone()
-    return u == username and p == password
+    u, p, pk, nonce = c.execute('SELECT username, password, pkey, nonce FROM app_config WHERE username=?',
+                                (username,)).fetchone()
+    Encrypt.init(pk, nonce)
+    p = Encrypt.instance.decode(p)
+    if u == username and p == password:
+        return True
+    else:
+        return False
 
 
 def insert_account(accountname, username, password, usedby, datetime):

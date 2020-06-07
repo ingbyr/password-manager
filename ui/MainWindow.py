@@ -30,7 +30,7 @@ class MainWindow(QMainWindow, CenterWidget):
         # 登陆
         self.login_window = LoginWindow(self)
         # TODO uncomment below
-        # self.open_login_window()
+        self.open_login_window()
 
         # 创建账户
         self.create_account_window = CreateAccountWindow(self)
@@ -45,7 +45,7 @@ class MainWindow(QMainWindow, CenterWidget):
         self.load_backup_window = LoadBackupWindow(self.refresh_data_signal)
 
         # TODO delete this
-        self.init_ui()
+        # self.init_ui()
 
     # 加载主窗口
     def init_ui(self):
@@ -83,6 +83,7 @@ class MainWindow(QMainWindow, CenterWidget):
     # 登陆窗口
     def open_login_window(self):
         self.login_window.show()
+        self.login_window.center()
 
     # 添加账户数据
     def open_account_window(self):

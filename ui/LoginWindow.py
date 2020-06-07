@@ -55,12 +55,12 @@ class LoginWindow(QWidget, CenterWidget):
         if login(account, password):
             self.open_main_window()
         else:
-            QMessageBox.warning(self, '账户名或密码错误', '账户名或密码错误')
+            pass
+            # QMessageBox.warning(self, '账户名或密码错误', '账户名或密码错误')
 
     def do_register(self):
         account = self.account.text()
         password = self.password.text()
-        # TODO 检查用户名和密码合法性，并对密码加密
         if create_app_account(account, password):
             QMessageBox.information(self, '注册成功', '注册成功，欢迎用户 ' + account)
             self.open_main_window()
