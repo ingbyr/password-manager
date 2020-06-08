@@ -42,8 +42,8 @@ def create_app_account(username, password):
     else:
         # 随机生成128位密钥，用于密码加密和解密，与账户绑定
         pk = get_random_bytes(16)
-        nonce = Encrypt.init(pk)
-        epw = Encrypt.instance.encode(password)
+        nonce = Encrypt.init_encoder(pk)
+        epw = Encrypt.encode(password)
         c.execute(
             'INSERT INTO app_config (username, password, pkey, nonce) VALUES (?, ?, ?, ?)',
             (username, epw, pk, nonce))
@@ -56,8 +56,9 @@ def login(username, password):
     c = conn.cursor()
     u, p, pk, nonce = c.execute('SELECT username, password, pkey, nonce FROM app_config WHERE username=?',
                                 (username,)).fetchone()
-    Encrypt.init(pk, nonce)
-    p = Encrypt.instance.decode(p)
+    Encrypt.init_encoder(pk)
+    Encrypt.init_decoder(pk, nonce)
+    p = Encrypt.decode(p)
     if u == username and p == password:
         return True
     else:

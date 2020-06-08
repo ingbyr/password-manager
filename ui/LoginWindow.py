@@ -55,8 +55,7 @@ class LoginWindow(QWidget, CenterWidget):
         if login(account, password):
             self.open_main_window()
         else:
-            pass
-            # QMessageBox.warning(self, '账户名或密码错误', '账户名或密码错误')
+            QMessageBox.warning(self, '账户名或密码错误', '账户名或密码错误')
 
     def do_register(self):
         account = self.account.text()

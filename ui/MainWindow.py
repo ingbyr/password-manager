@@ -3,7 +3,6 @@ from PyQt5.QtWidgets import QMainWindow, QGridLayout, QPushButton, QWidget, QMen
 
 import Backup
 import Database
-from Database import select_all_account
 from ui.CreateAccountWindow import CreateAccountWindow
 from ui.EditAccountWindow import EditAccountWindow
 from ui.FilterAccountWindow import FilterAccountWindow
@@ -29,7 +28,6 @@ class MainWindow(QMainWindow, CenterWidget):
 
         # 登陆
         self.login_window = LoginWindow(self)
-        # TODO uncomment below
         self.open_login_window()
 
         # 创建账户
@@ -43,9 +41,6 @@ class MainWindow(QMainWindow, CenterWidget):
         self.account_window = FilterAccountWindow(self.refresh_data_signal)
 
         self.load_backup_window = LoadBackupWindow(self.refresh_data_signal)
-
-        # TODO delete this
-        # self.init_ui()
 
     # 加载主窗口
     def init_ui(self):
@@ -106,7 +101,7 @@ class MainWindow(QMainWindow, CenterWidget):
 
     # 加载数据到 table view
     def load_data(self):
-        self.account_table.set_data(select_all_account())
+        self.account_table.set_data(Database.select_all_account())
 
     def display_menu(self, pos):
         row_num = -1

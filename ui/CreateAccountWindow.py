@@ -3,6 +3,7 @@ from datetime import datetime
 from PyQt5.QtWidgets import QWidget
 
 import Database
+import Encrypt
 from ui.widget.AccountWidget import AccountWidget
 
 
@@ -18,9 +19,9 @@ class CreateAccountWindow(QWidget):
         self.setGeometry(400, 200, 400, 200)
 
     def create_account(self):
-        accoutname, username, password, usedb = self.account_widget.get_account_info()
-        if Database.insert_account(accoutname, username,
-                                   password, usedb,
+        an, un, pw, ub = self.account_widget.get_account_info()
+        pw = Encrypt.encode(pw)
+        if Database.insert_account(an, un, pw, ub,
                                    datetime.now().date()):
             self.account_widget.msg.setText('添加成功')
             self.mv.refresh_data_signal.emit()
