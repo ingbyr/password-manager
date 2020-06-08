@@ -2,6 +2,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QWidget, QHBoxLayout, QPushButton, QLabel, \
     QLineEdit, QMessageBox, QGridLayout
 
+import Database
 from Database import create_app_account, login
 from ui.widget.CenterWidget import CenterWidget
 
@@ -31,13 +32,16 @@ class LoginWindow(QWidget, CenterWidget):
         # 按钮
         hbox_btn = QHBoxLayout()
         hbox_btn.setSpacing(5)
-        confirm_btn = QPushButton("登陆")
-        confirm_btn.clicked.connect(self.do_login)
-        hbox_btn.addWidget(confirm_btn)
 
-        register_btn = QPushButton("注册")
-        register_btn.clicked.connect(self.do_register)
-        hbox_btn.addWidget(register_btn)
+        need_register = Database.exist_app_account()
+        if need_register:
+            register_btn = QPushButton("注册")
+            register_btn.clicked.connect(self.do_register)
+            hbox_btn.addWidget(register_btn)
+        else:
+            confirm_btn = QPushButton("登陆")
+            confirm_btn.clicked.connect(self.do_login)
+            hbox_btn.addWidget(confirm_btn)
 
         close_btn = QPushButton("关闭")
         close_btn.clicked.connect(self.quit)
@@ -73,4 +77,3 @@ class LoginWindow(QWidget, CenterWidget):
     def quit(self):
         self.close()
         self.mv.quit_signal.emit()
-

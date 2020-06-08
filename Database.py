@@ -2,8 +2,8 @@ import sqlite3
 
 from Crypto.Random import get_random_bytes
 
-import Encrypt
-from Common import db_path
+import Cryptor
+from Common import *
 
 conn = sqlite3.connect(db_path)
 cur = conn.cursor()
@@ -27,8 +27,7 @@ cur.execute('''
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         username TEXT NOT NULL ,
         password BLOB NOT NULL ,
-        pkey BLOB NOT NULL,
-        nonce BLOB NOT NULL
+        pkey BLOB NOT NULL
     )''')
 
 conn.commit()
@@ -42,23 +41,28 @@ def create_app_account(username, password):
     else:
         # 随机生成128位密钥，用于密码加密和解密，与账户绑定
         pk = get_random_bytes(16)
-        nonce = Encrypt.init_encoder(pk)
-        epw = Encrypt.encode(password)
+        Cryptor.init(pk)
+        epw = Cryptor.encode(password)
         c.execute(
-            'INSERT INTO app_config (username, password, pkey, nonce) VALUES (?, ?, ?, ?)',
-            (username, epw, pk, nonce))
+            'INSERT INTO app_config (username, password, pkey) VALUES (?, ?, ?)',
+            (username, epw, pk))
         conn.commit()
         login(username, password)
         return True
 
 
+def exist_app_account():
+    c = conn.cursor()
+    app_config = c.execute('SELECT * From app_config').fetchone()
+    return app_config is None
+
+
 def login(username, password):
     c = conn.cursor()
-    u, p, pk, nonce = c.execute('SELECT username, password, pkey, nonce FROM app_config WHERE username=?',
-                                (username,)).fetchone()
-    Encrypt.init_encoder(pk)
-    Encrypt.init_decoder(pk, nonce)
-    p = Encrypt.decode(p)
+    u, p, pk = c.execute('SELECT username, password, pkey FROM app_config WHERE username=?',
+                         (username,)).fetchone()
+    Cryptor.init(pk)
+    p = Cryptor.decode(p)
     if u == username and p == password:
         return True
     else:
@@ -90,11 +94,15 @@ def select_account_by_account_name(account_name):
 
 def select_account_by_id(data_id):
     c = conn.cursor()
-    return c.execute('SELECT accountname, username, password, usedby FROM account WHERE id=?', (data_id,)).fetchone()
+    an, un, pw, ub = c.execute('SELECT accountname, username, password, usedby FROM account WHERE id=?',
+                               (data_id,)).fetchone()
+    pw = Cryptor.decode(pw)
+    return an, un, pw, ub
 
 
 def update_account(data_id, an, un, pw, ub, date):
     c = conn.cursor()
+    pw = Cryptor.encode(pw)
     c.execute('UPDATE account '
               'SET accountname = ?, username = ?, password = ?, usedby=?, datetime=? '
               'WHERE id = ?',
@@ -122,4 +130,4 @@ def restore_accounts(accounts):
             datetime TEXT NOT NULL 
         )''')
     for account in accounts:
-        insert_account(account[1], account[2], account[3], account[4], account[5])
+        insert_account(account[ACCOUNT_NAME], account[USERNAME], account[PASSWORD], account[USED_BY], account[DATE])
