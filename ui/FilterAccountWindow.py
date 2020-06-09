@@ -6,7 +6,11 @@ from ui.EditAccountWindow import EditAccountWindow
 from ui.widget.AccountTableWidget import AccountTableWidget
 
 
-class FilterAccountWindow(QWidget):
+# 显示某一账户下的所有数据
+from ui.widget.CenterWidget import CenterWidget
+
+
+class FilterAccountWindow(QWidget, CenterWidget):
     refresh_data_signal = pyqtSignal()
 
     def __init__(self, mv_signal):
@@ -22,6 +26,7 @@ class FilterAccountWindow(QWidget):
         layout.addWidget(self.data_table)
         self.setLayout(layout)
         self.setGeometry(500, 300, 500, 300)
+        self.center()
 
     def load_data(self, account_name):
         self.account_name = account_name

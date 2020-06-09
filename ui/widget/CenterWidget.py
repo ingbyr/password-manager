@@ -1,9 +1,8 @@
 from PyQt5.QtWidgets import QDesktopWidget
 
 
+# 组件公共父类，用于将窗口放置屏幕中心
 class CenterWidget:
-    def __init__(self):
-        self.center()
 
     def center(self):
         qr = self.frameGeometry()

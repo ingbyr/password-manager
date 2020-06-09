@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QWidget, QLabel, QLineEdit, QGridLayout, QPushButton, QHBoxLayout
 
-
+# 某条账户数据的GUI
 class AccountWidget(QWidget):
     def __init__(self):
         super().__init__()

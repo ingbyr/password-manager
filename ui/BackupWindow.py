@@ -5,8 +5,11 @@ import Backup
 import Database
 from Common import backup_dir
 
+from ui.widget.CenterWidget import CenterWidget
 
-class LoadBackupWindow(QWidget):
+
+# 数据库备份和加载
+class LoadBackupWindow(QWidget, CenterWidget):
     def __init__(self, refresh_signal):
         super(LoadBackupWindow, self).__init__()
         self.refresh_signal = refresh_signal
@@ -22,7 +25,9 @@ class LoadBackupWindow(QWidget):
         layout.addWidget(self.backups_listview)
 
         self.setLayout(layout)
+        self.center()
 
+    # 选中待加载的备份文件后，重置数据库，添加备份数据到数据库
     def choose_backup(self, idx):
         file = self.backups[idx.row()]
         file = backup_dir.joinpath(file)
@@ -31,6 +36,7 @@ class LoadBackupWindow(QWidget):
         self.refresh_signal.emit()
         self.close()
 
+    # 加载备份文件列表
     def load_backups(self):
         self.backups = Backup.list_backups()
         slm = QStringListModel()

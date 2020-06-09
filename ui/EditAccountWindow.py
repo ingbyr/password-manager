@@ -7,8 +7,11 @@ from PyQt5.QtWidgets import QWidget
 import Database
 from ui.widget.AccountWidget import AccountWidget
 
+from ui.widget.CenterWidget import CenterWidget
 
-class EditAccountWindow(QWidget):
+
+# 编辑某条数据
+class EditAccountWindow(QWidget, CenterWidget):
     data_id_signal = pyqtSignal(int)
 
     def __init__(self, *refresh_signals):
@@ -23,6 +26,7 @@ class EditAccountWindow(QWidget):
         self.setGeometry(400, 200, 400, 200)
 
         self.data_id_signal.connect(self.init_ui_data)
+        self.center()
 
     @QtCore.pyqtSlot(int)
     def init_ui_data(self, data_id):

@@ -5,6 +5,7 @@ import Cryptor
 from Common import ACCOUNT_ID, PASSWORD, PASSWORD_MASK
 
 
+# 账户数据列表GUI
 class AccountTableWidget(QTableWidget):
     def __init__(self):
         super().__init__()

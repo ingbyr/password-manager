@@ -6,8 +6,11 @@ import Database
 import Cryptor
 from ui.widget.AccountWidget import AccountWidget
 
+from ui.widget.CenterWidget import CenterWidget
 
-class CreateAccountWindow(QWidget):
+
+# 添加某条数据
+class CreateAccountWindow(QWidget, CenterWidget):
     def __init__(self, mv):
         super().__init__()
         self.mv = mv
@@ -17,6 +20,7 @@ class CreateAccountWindow(QWidget):
         self.account_widget.cancel_btn.clicked.connect(self.close)
         self.setLayout(self.account_widget.layout)
         self.setGeometry(400, 200, 400, 200)
+        self.center()
 
     def create_account(self):
         an, un, pw, ub = self.account_widget.get_account_info()

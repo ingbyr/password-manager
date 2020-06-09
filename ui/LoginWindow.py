@@ -16,6 +16,7 @@ class LoginWindow(QWidget, CenterWidget):
         self.password = QLineEdit()
         self.init_ui()
         self.setGeometry(300, 150, 300, 150)
+        self.center()
 
     def init_ui(self):
 
@@ -53,6 +54,7 @@ class LoginWindow(QWidget, CenterWidget):
         self.setLayout(grid)
         self.setWindowFlags(Qt.WindowStaysOnTopHint)
 
+    # 应用账户登陆
     def do_login(self):
         account = self.account.text()
         password = self.password.text()
@@ -61,6 +63,7 @@ class LoginWindow(QWidget, CenterWidget):
         else:
             QMessageBox.warning(self, '账户名或密码错误', '账户名或密码错误')
 
+    # 应用账户注册
     def do_register(self):
         account = self.account.text()
         password = self.password.text()
@@ -70,10 +73,12 @@ class LoginWindow(QWidget, CenterWidget):
         else:
             QMessageBox.warning(self, '注册失败', '用户名已被占用')
 
+    # 打开应用主窗口
     def open_main_window(self):
         self.close()
         self.mv.init_signal.emit()
 
+    # 退出
     def quit(self):
         self.close()
         self.mv.quit_signal.emit()

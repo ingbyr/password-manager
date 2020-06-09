@@ -12,6 +12,7 @@ from ui.widget.AccountTableWidget import AccountTableWidget
 from ui.widget.CenterWidget import CenterWidget
 
 
+# 主窗口
 class MainWindow(QMainWindow, CenterWidget):
     quit_signal = pyqtSignal()
     init_signal = pyqtSignal()
@@ -40,10 +41,15 @@ class MainWindow(QMainWindow, CenterWidget):
         # 单个账户数据
         self.account_window = FilterAccountWindow(self.refresh_data_signal)
 
+        # 加载备份数据
         self.load_backup_window = LoadBackupWindow(self.refresh_data_signal)
+
+        self.setGeometry(500, 500, 500, 500)
+        self.center()
 
     # 加载主窗口
     def init_ui(self):
+        self.center()
         grid = QGridLayout()
         grid.setSpacing(20)
         root = QWidget()
@@ -94,6 +100,7 @@ class MainWindow(QMainWindow, CenterWidget):
         self.load_backup_window.load_backups()
         self.load_backup_window.show()
 
+    # 切换密码明文显示
     def change_pw_way(self):
         self.account_table.mask_password = not self.account_table.mask_password
         self.change_pw_way_btn.setText(self.change_pw_way_text[self.account_table.mask_password])

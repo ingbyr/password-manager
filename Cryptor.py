@@ -1,7 +1,6 @@
 from binascii import b2a_hex, a2b_hex
 
 from Crypto.Cipher import AES
-from Crypto.Random import get_random_bytes
 
 
 class AESEncrypt:
@@ -35,20 +34,17 @@ class AESEncrypt:
 c = AESEncrypt()
 
 
+# 设置AES中的密钥
 def init(key):
     c.set_key(key)
     return c
 
 
+# 加密
 def encode(data):
     return c.encrypt(data)
 
 
+# 解密
 def decode(data):
     return c.decrypt(data)
-
-
-if __name__ == '__main__':
-    init(get_random_bytes(16))
-    data = c.encrypt('ingbyr')
-    print(c.decrypt(data))
