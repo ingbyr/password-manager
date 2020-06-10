@@ -15,6 +15,7 @@ class FilterAccountWindow(QWidget, CenterWidget):
 
     def __init__(self, mv_signal):
         super(FilterAccountWindow, self).__init__()
+        self.mv_signal = mv_signal
         self.refresh_data_signal.connect(self.refresh_data)
         self.edit_account_window = EditAccountWindow(mv_signal, self.refresh_data_signal)
         layout = QVBoxLayout()
@@ -54,5 +55,6 @@ class FilterAccountWindow(QWidget, CenterWidget):
             account_id = self.data_table.item(row_num, 0).text()
             Database.delete_account_by_id(account_id)
             self.refresh_data_signal.emit()
+            self.mv_signal.emit()
         else:
             return

@@ -20,11 +20,12 @@ class AccountTableWidget(QTableWidget):
             if idx == ACCOUNT_ID or idx == len(header_labels):
                 self.horizontalHeader().setSectionResizeMode(idx, QHeaderView.ResizeToContents)
 
+    # 添加右键菜单
     def set_item_menu(self, menu_generator):
-        # 添加右键菜单
         self.setContextMenuPolicy(Qt.CustomContextMenu)
         self.customContextMenuRequested.connect(menu_generator)
 
+    # 填充数据到table
     def set_data(self, accounts):
         self.setRowCount(0)
         for account in accounts:

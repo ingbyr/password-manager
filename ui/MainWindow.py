@@ -72,9 +72,9 @@ class MainWindow(QMainWindow, CenterWidget):
         local_backup_btn.clicked.connect(self.local_backup_data)
         grid.addWidget(local_backup_btn, 1, 2)
 
-        local_backup_btn = QPushButton('加载备份')
-        local_backup_btn.clicked.connect(self.load_backup_data)
-        grid.addWidget(local_backup_btn, 1, 3)
+        load_backup_btn = QPushButton('加载备份')
+        load_backup_btn.clicked.connect(self.load_backup_data)
+        grid.addWidget(load_backup_btn, 1, 3)
 
         # 账户展示
         self.account_table.set_item_menu(self.display_menu)

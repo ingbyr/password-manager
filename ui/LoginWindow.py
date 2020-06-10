@@ -70,13 +70,12 @@ class LoginWindow(QWidget, CenterWidget):
         if create_app_account(account, password):
             QMessageBox.information(self, '注册成功', '注册成功，欢迎用户 ' + account)
             self.open_main_window()
-        else:
-            QMessageBox.warning(self, '注册失败', '用户名已被占用')
 
     # 打开应用主窗口
     def open_main_window(self):
         self.close()
         self.mv.init_signal.emit()
+        self.mv.init_ui()
 
     # 退出
     def quit(self):
